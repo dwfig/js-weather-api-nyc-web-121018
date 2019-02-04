@@ -1,9 +1,19 @@
+let chartContainer = document.querySelector("#NYCWeatherChart")
+
 function formatHours(hourlyData){
   // your code here
+  let formattedTimes = hourlyData.map(function(hourData){
+       return (parseInt(hourData.time) * 1000)
+  })
+  return formattedTimes
 }
 
 function formatFahrenheit(hourlyData){
   // your code here
+  let formattedTemperatures = hourlyData.map(function(hourData){
+    return (parseFloat(hourData.temperature))
+  })
+  return formattedTemperatures
 }
 
 function generateDataSet(hours, temperatures) {
@@ -37,4 +47,25 @@ function makeRequest(endpoint, canvas) {
   // const chartDataset = generateDataSet(formattedHours, formattedTemps)
   // append the chart to the DOM
   // new Chart(canvas, chartDataset)
+  fetch(endpoint)
+//    .then(response => console.log(response))
+    .then(response => response.json())
+    //.then(parsed => console.log(parsed.hourly.data))
+//    .then(parsed => console.log(formatHours(parsed.hourly.data)))
+
+//    .then(parsed => console.log(parsed.hourly.data[0].temperature))
+    .then(function(parsed){
+      //console.log(formatHours(parsed.hourly.data))
+      let formattedHours = formatHours(parsed.hourly.data)
+      //console.log(formatFahrenheit(parsed.hourly.data))
+      let formattedTemps = formatFahrenheit(parsed.hourly.data)
+      let chartData = generateDataSet(formattedHours, formattedTemps)
+      let weatherChart = new Chart(canvas, chartData)
+      chartContainer.innerHTML += weatherChart
+    })
+
+    // .then(function(parsed){
+    //   let myDate = new Date(parseInt(parsed.hourly.data[0].time) * 1000)
+    //   console.log(myDate.getHours())
+    //  })
 }
